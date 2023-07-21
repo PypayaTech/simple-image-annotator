@@ -237,9 +237,13 @@ class ImageAnnotator(QtWidgets.QMainWindow):
         if event.button() != Qt.LeftButton:
             return
 
-        x, y = int(self._graphics_view.mapToScene(event.pos()).x()), int(
-            self._graphics_view.mapToScene(event.pos()).y())
+        x = int(self._graphics_view.mapToScene(event.pos()).x())
+        y = int(self._graphics_view.mapToScene(event.pos()).y())
         normalized_x, normalized_y = x / self._m_pixmap.width(), y / self._m_pixmap.height()
+
+        # If click is outside the image, just return and ignore the event
+        if x < 0 or x >= self._m_pixmap.width() or y < 0 or y >= self._m_pixmap.height():
+            return
 
         if self._mode == 'keypoints':
             # Check if the user clicked on an existing keypoint
