@@ -187,7 +187,8 @@ class ImageAnnotator(QtWidgets.QMainWindow):
 
     def save(self):
         current_image_name = self._image_filenames[self._current_image_index]
-        default_name = os.path.splitext(current_image_name)[0] + '.txt'
+        default_file_name = os.path.splitext(current_image_name)[0] + '.txt'
+        default_name = os.path.join(self._current_directory, default_file_name)
         filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, 'Save File', default_name, 'Text Files (*.txt)')
         if filename:
             with open(filename, 'w') as file:
