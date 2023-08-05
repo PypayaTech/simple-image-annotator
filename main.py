@@ -442,6 +442,13 @@ class ImageAnnotator(QtWidgets.QMainWindow):
                                              int(normalized_bottom_right.y() * pixmap.height()))
                 qp.drawRect(QtCore.QRect(top_left, bottom_right).normalized())
 
+                # Add special points on the corners of bounding box
+                qp.setPen(QtGui.QPen(QtCore.Qt.green, 10))  # you can adjust the pen size as per your requirement
+                qp.drawPoint(top_left)  # top-left corner
+                qp.drawPoint(bottom_right.x(), top_left.y())  # top-right corner
+                qp.drawPoint(bottom_right)  # bottom-right corner
+                qp.drawPoint(top_left.x(), bottom_right.y())  # bottom-left corner
+
             elif len(item_text) == 3:  # Keypoint
                 qp.setPen(QtGui.QPen(color, point_size))
                 normalized_x, normalized_y = float(item_text[1]), float(item_text[2])
