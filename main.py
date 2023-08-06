@@ -15,10 +15,10 @@ class ImageAnnotator(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         self.initUI()
-        self.setWindowTitle('Simple Image Annotator')
+        self.setWindowTitle("Simple Image Annotator")
         self._target_height, self._target_width = 1920, 1080
         self._is_saved = True
-        self._mode = 'keypoints'
+        self._mode = "keypoints"
         self._class_colors = []
         self._current_image_index = None
         self._image_filenames = None
@@ -102,7 +102,7 @@ class ImageAnnotator(QtWidgets.QMainWindow):
         self._changeColorAction = QAction(QtGui.QIcon(os.path.join("resources", "icons", "color.png")),
                                           "Change point color", self)
         self._changeColorAction.triggered.connect(self._select_point_color)
-        self._changeColorAction.setProperty('background-color', QtCore.Qt.red)
+        self._changeColorAction.setProperty("background-color", QtCore.Qt.red)
         self._left_toolbar.addAction(self._changeColorAction)
 
         # Create the "Change point size" action
@@ -118,8 +118,8 @@ class ImageAnnotator(QtWidgets.QMainWindow):
         self._left_toolbar.addAction(self._switchModeAction)
 
     def switch_mode(self):
-        self._mode = 'keypoints' if self._mode == 'bounding_boxes' else 'bounding_boxes'
-        self._switchModeAction.setText(f'Switch Mode (Current: {self._mode})')
+        self._mode = "keypoints" if self._mode == "bounding_boxes" else "bounding_boxes"
+        self._switchModeAction.setText(f"Switch Mode (Current: {self._mode})")
 
     def open_dir(self):
         options = QFileDialog.Options()
@@ -132,7 +132,7 @@ class ImageAnnotator(QtWidgets.QMainWindow):
             self._current_directory = directory
             self._image_filenames = [
                 name for name in os.listdir(directory)
-                if any(name.endswith(ext) for ext in ['.jpg', '.png', '.gif', '.jpeg'])
+                if any(name.endswith(ext) for ext in [".jpg", ".png", ".gif", ".jpeg"])
             ]
             self._current_image_index = 0
             for i in range(len(self._class_names)):
@@ -187,13 +187,13 @@ class ImageAnnotator(QtWidgets.QMainWindow):
 
     def save(self):
         current_image_name = self._image_filenames[self._current_image_index]
-        default_file_name = os.path.splitext(current_image_name)[0] + '.txt'
+        default_file_name = os.path.splitext(current_image_name)[0] + ".txt"
         default_name = os.path.join(self._current_directory, default_file_name)
-        filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, 'Save File', default_name, 'Text Files (*.txt)')
+        filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Save File", default_name, "Text Files (*.txt)")
         if filename:
-            with open(filename, 'w') as file:
+            with open(filename, "w") as file:
                 for i in range(self._coordinates_list.count()):
-                    item_text = self._coordinates_list.item(i).text().split(',')
+                    item_text = self._coordinates_list.item(i).text().split(",")
                     class_idx = item_text[0]
                     if len(item_text) == 3:  # Keypoint
                         normalized_x, normalized_y = item_text[1], item_text[2]
@@ -215,7 +215,7 @@ class ImageAnnotator(QtWidgets.QMainWindow):
                 self._class_colors[class_idx] = color.name()
                 for i in range(self._coordinates_list.count()):
                     item = self._coordinates_list.item(i)
-                    item_text = item.text().split(',')
+                    item_text = item.text().split(",")
                     item_class_idx = int(item_text[0])
                     if item_class_idx == class_idx:
                         if len(item_text) == 3:  # Keypoint
@@ -246,13 +246,13 @@ class ImageAnnotator(QtWidgets.QMainWindow):
         if x < 0 or x >= self._m_pixmap.width() or y < 0 or y >= self._m_pixmap.height():
             return
 
-        if self._mode == 'keypoints':
+        if self._mode == "keypoints":
             # Check if the user clicked on an existing keypoint
             for i in range(self._coordinates_list.count()):
                 item = self._coordinates_list.item(i)
-                if len(item.text().split(',')) != 3:  # Bounding box
+                if len(item.text().split(",")) != 3:  # Bounding box
                     continue
-                class_idx, item_normalized_x, item_normalized_y = item.text().split(',')
+                class_idx, item_normalized_x, item_normalized_y = item.text().split(",")
                 item_x, item_y = int(float(item_normalized_x) * self._m_pixmap.width()), int(
                     float(item_normalized_y) * self._m_pixmap.height())
                 if abs(item_x - x) < 5 and abs(item_y - y) < 5:  # adjust the threshold (5) as needed
@@ -270,14 +270,14 @@ class ImageAnnotator(QtWidgets.QMainWindow):
             self.update_image()
             self.update()
 
-        elif self._mode == 'bounding_boxes':
+        elif self._mode == "bounding_boxes":
             # Check if the user clicked on a corner of an existing bounding box
             for i in range(self._coordinates_list.count()):
                 item = self._coordinates_list.item(i)
-                if len(item.text().split(',')) != 5:  # Keypoint
+                if len(item.text().split(",")) != 5:  # Keypoint
                     continue
                 class_idx, normalized_top_left_x, normalized_top_left_y, \
-                    normalized_bottom_right_x, normalized_bottom_right_y = item.text().split(',')
+                    normalized_bottom_right_x, normalized_bottom_right_y = item.text().split(",")
                 top_left_x, top_left_y = int(float(normalized_top_left_x) * self._m_pixmap.width()), int(
                     float(normalized_top_left_y) * self._m_pixmap.height())
                 bottom_right_x, bottom_right_y = int(float(normalized_bottom_right_x) * self._m_pixmap.width()), int(
@@ -288,19 +288,19 @@ class ImageAnnotator(QtWidgets.QMainWindow):
 
                 if abs(top_left_x - x) < 5 and abs(top_left_y - y) < 5:  # Top left corner
                     self._dragged_box_index = i
-                    self._dragged_box_corner = 'top_left'
+                    self._dragged_box_corner = "top_left"
                     return
                 elif abs(bottom_right_x - x) < 5 and abs(bottom_right_y - y) < 5:  # Bottom right corner
                     self._dragged_box_index = i
-                    self._dragged_box_corner = 'bottom_right'
+                    self._dragged_box_corner = "bottom_right"
                     return
                 elif abs(top_right_x - x) < 5 and abs(top_right_y - y) < 5:  # Top right corner
                     self._dragged_box_index = i
-                    self._dragged_box_corner = 'top_right'
+                    self._dragged_box_corner = "top_right"
                     return
                 elif abs(bottom_left_x - x) < 5 and abs(bottom_left_y - y) < 5:  # Bottom left corner
                     self._dragged_box_index = i
-                    self._dragged_box_corner = 'bottom_left'
+                    self._dragged_box_corner = "bottom_left"
                     return
 
             # Set the start position of the bounding box
@@ -311,24 +311,24 @@ class ImageAnnotator(QtWidgets.QMainWindow):
             self._graphics_view.mapToScene(event.pos()).y())
         normalized_x, normalized_y = x / self._m_pixmap.width(), y / self._m_pixmap.height()
 
-        if self._mode == 'keypoints':
+        if self._mode == "keypoints":
             if self._dragged_keypoint_index is not None:
                 item = self._coordinates_list.item(self._dragged_keypoint_index)
-                class_idx = item.text().split(',')[0]
+                class_idx = item.text().split(",")[0]
                 item.setText(f"{class_idx}, {normalized_x:.4f}, {normalized_y:.4f}")
                 self.update_image()
-        elif self._mode == 'bounding_boxes':
+        elif self._mode == "bounding_boxes":
             if self._dragged_box_index is not None:
                 self._dragging_corner = True
                 item = self._coordinates_list.item(self._dragged_box_index)
-                class_idx, top_left_x, top_left_y, bottom_right_x, bottom_right_y = [elem.strip() for elem in item.text().split(',')]
-                if self._dragged_box_corner == 'top_left':
+                class_idx, top_left_x, top_left_y, bottom_right_x, bottom_right_y = [elem.strip() for elem in item.text().split(",")]
+                if self._dragged_box_corner == "top_left":
                     item.setText(f"{class_idx}, {normalized_x:.4f}, {normalized_y:.4f}, {bottom_right_x}, {bottom_right_y}")
-                elif self._dragged_box_corner == 'bottom_right':
+                elif self._dragged_box_corner == "bottom_right":
                     item.setText(f"{class_idx}, {top_left_x}, {top_left_y}, {normalized_x:.4f}, {normalized_y:.4f}")
-                elif self._dragged_box_corner == 'top_right':
+                elif self._dragged_box_corner == "top_right":
                     item.setText(f"{class_idx}, {top_left_x}, {normalized_y:.4f}, {normalized_x:.4f}, {bottom_right_y}")
-                elif self._dragged_box_corner == 'bottom_left':
+                elif self._dragged_box_corner == "bottom_left":
                     item.setText(f"{class_idx}, {normalized_x:.4f}, {top_left_y}, {bottom_right_x}, {normalized_y:.4f}")
                 self.update_image()
             else:
@@ -342,7 +342,7 @@ class ImageAnnotator(QtWidgets.QMainWindow):
         if event.button() != Qt.LeftButton:
             return
 
-        if self._mode == 'keypoints':
+        if self._mode == "keypoints":
             if self._dragged_keypoint_index is None:
                 return
             x, y = int(self._graphics_view.mapToScene(event.pos()).x()), int(self._graphics_view.mapToScene(event.pos()).y())
@@ -354,10 +354,10 @@ class ImageAnnotator(QtWidgets.QMainWindow):
                 self.update_image()
             self._dragged_keypoint_index = None
 
-        elif self._mode == 'bounding_boxes':
+        elif self._mode == "bounding_boxes":
             if self._dragged_box_index is not None:  # Dragging behaviour
                 item = self._coordinates_list.item(self._dragged_box_index)
-                class_idx, normalized_top_left_x, normalized_top_left_y, normalized_bottom_right_x, normalized_bottom_right_y = item.text().split(',')
+                class_idx, normalized_top_left_x, normalized_top_left_y, normalized_bottom_right_x, normalized_bottom_right_y = item.text().split(",")
                 top_left_x, top_left_y = int(float(normalized_top_left_x) * self._m_pixmap.width()), int(
                     float(normalized_top_left_y) * self._m_pixmap.height())
                 bottom_right_x, bottom_right_y = int(float(normalized_bottom_right_x) * self._m_pixmap.width()), int(
@@ -427,7 +427,7 @@ class ImageAnnotator(QtWidgets.QMainWindow):
 
         # Draw
         for i in range(self._coordinates_list.count()):
-            item_text = self._coordinates_list.item(i).text().split(',')
+            item_text = self._coordinates_list.item(i).text().split(",")
             class_idx = int(item_text[0])
             color = self._class_colors[class_idx]
             color = QtGui.QColor(color.strip())
@@ -456,7 +456,7 @@ class ImageAnnotator(QtWidgets.QMainWindow):
                 qp.drawPoint(QtCore.QPoint(x, y))
 
         # Draw the bounding box being created
-        if self._mode == 'bounding_boxes' and self._bounding_box_start and self._bounding_box_end:
+        if self._mode == "bounding_boxes" and self._bounding_box_start and self._bounding_box_end:
             qp.setPen(QtGui.QPen(QtGui.QColor(QtCore.Qt.green), 1, QtCore.Qt.SolidLine))
             bounding_box_rect = QtCore.QRect(self._bounding_box_start, self._bounding_box_end)
             qp.drawRect(bounding_box_rect.normalized())
@@ -485,7 +485,7 @@ class ImageAnnotator(QtWidgets.QMainWindow):
         if os.path.exists(txt_file):
             with open(txt_file, "r") as file:
                 for line in file:
-                    line_elements = line.strip().split(',')
+                    line_elements = line.strip().split(",")
                     class_idx = int(line_elements[0])
                     if len(line_elements) == 3:  # Keypoint
                         normalized_x, normalized_y = line_elements[1], line_elements[2]
