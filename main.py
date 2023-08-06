@@ -286,22 +286,18 @@ class ImageAnnotator(QtWidgets.QMainWindow):
                 top_right_x, top_right_y = bottom_right_x, top_left_y
                 bottom_left_x, bottom_left_y = top_left_x, bottom_right_y
 
-                if abs(top_left_x - x) < 5 and abs(top_left_y - y) < 5:  # Top left corner
-                    self._dragged_box_index = i
-                    self._dragged_box_corner = "top_left"
-                    return
-                elif abs(bottom_right_x - x) < 5 and abs(bottom_right_y - y) < 5:  # Bottom right corner
-                    self._dragged_box_index = i
-                    self._dragged_box_corner = "bottom_right"
-                    return
-                elif abs(top_right_x - x) < 5 and abs(top_right_y - y) < 5:  # Top right corner
-                    self._dragged_box_index = i
-                    self._dragged_box_corner = "top_right"
-                    return
-                elif abs(bottom_left_x - x) < 5 and abs(bottom_left_y - y) < 5:  # Bottom left corner
-                    self._dragged_box_index = i
-                    self._dragged_box_corner = "bottom_left"
-                    return
+                corners = [
+                    ("top_left", top_left_x, top_left_y),
+                    ("bottom_right", bottom_right_x, bottom_right_y),
+                    ("top_right", top_right_x, top_right_y),
+                    ("bottom_left", bottom_left_x, bottom_left_y),
+                ]
+
+                for corner, corner_x, corner_y in corners:
+                    if abs(corner_x - x) < 5 and abs(corner_y - y) < 5:
+                        self._dragged_box_index = i
+                        self._dragged_box_corner = corner
+                        return
 
             # Set the start position of the bounding box
             self._bounding_box_start = self._graphics_view.mapToScene(event.pos()).toPoint()
