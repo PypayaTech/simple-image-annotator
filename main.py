@@ -113,7 +113,7 @@ class ImageAnnotator(QtWidgets.QMainWindow):
 
         # Create the "Switch Mode" action
         self._switchModeAction = QAction(QtGui.QIcon(os.path.join("resources", "icons", "next.png")),
-                                         "Switch Mode", self)
+                                         "Switch Mode (Current: keypoints)", self)
         self._switchModeAction.triggered.connect(self.switch_mode)
         self._left_toolbar.addAction(self._switchModeAction)
 
